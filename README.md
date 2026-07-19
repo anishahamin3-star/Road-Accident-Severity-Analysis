@@ -35,31 +35,30 @@ The system helps analyze accident patterns and predict accident severity, which 
 ## 📸 Project Screenshots
 
 ### 🏠 Home Page
-![Home Page](screenshots/home.png)
+![Home Page](screenshots/Home.png)
 
 ---
 
 ### 📊 Dashboard
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Dashboard.png)
 
 ---
 
 ### 📈 Data Analysis Graphs
-![Graphs](screenshots/graphs.png)
+![Graphs](screenshots/Graphs.png)
 
 ---
 
 ### 🤖 Severity Prediction
-![Prediction](screenshots/prediction.png)
+![Prediction](screenshots/Prediction.png)
 
 ---
 
 ### 💡 Insights
-![Insights](screenshots/insights.png)
+![Insights](screenshots/Insights.png)
 
 ---
 
 ### ℹ️ About Page
-![About Page](screenshots/about_page.png)
----
+![About Page](screenshots/About_Page.png)
 **Developed by:** Anisha H. Amin
