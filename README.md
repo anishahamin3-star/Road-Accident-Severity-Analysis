@@ -30,5 +30,36 @@ This project is a Machine Learning-based Road Accident Severity Analysis and Pre
 ## 🎯 Outcome
 The system helps analyze accident patterns and predict accident severity, which can assist in improving road safety and decision-making.
 
+
+
+## 📸 Project Screenshots
+
+### 🏠 Home Page
+![Home Page](screenshots/home.png)
+
+---
+
+### 📊 Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+### 📈 Data Analysis Graphs
+![Graphs](screenshots/graphs.png)
+
+---
+
+### 🤖 Severity Prediction
+![Prediction](screenshots/prediction.png)
+
+---
+
+### 💡 Insights
+![Insights](screenshots/insights.png)
+
+---
+
+### ℹ️ About Page
+![About Page](screenshots/about_page.png)
 ---
 **Developed by:** Anisha H. Amin
