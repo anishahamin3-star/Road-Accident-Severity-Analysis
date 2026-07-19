@@ -61,4 +61,4 @@ The system helps analyze accident patterns and predict accident severity, which 
 
 ### ℹ️ About Page
 ![About Page](screenshots/About_Page.png)
-**Developed by:** Anisha H. Amin
+**Developed by:** Anisha H Amin
