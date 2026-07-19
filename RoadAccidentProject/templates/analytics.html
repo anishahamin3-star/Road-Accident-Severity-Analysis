@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Advanced Analytics - Road Accident Hotspot{% endblock %}
+{% block page_title %}Advanced Analytics Dashboard{% endblock %}
+
+{% block content %}
+<!-- KPI Stats for Analytics -->
+<div class="stats-grid" style="margin-bottom: 24px;">
+    <div class="metric-card danger">
+        <div class="metric-info">
+            <h3>Top Accident Cause</h3>
+            <div class="value" style="font-size: 20px; font-weight: 800; margin-top: 5px; text-transform: capitalize;">
+                {{ top_cause }}
+            </div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                {{ top_cause_count }} Accidents ({{ top_cause_pct }}%)
+            </div>
+        </div>
+        <div class="metric-icon">⚠️</div>
+    </div>
+    
+    <div class="metric-card warning">
+        <div class="metric-info">
+            <h3>Weekend Accident Rate</h3>
+            <div class="value">{{ weekend_pct }}%</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                {{ weekend_count }} Weekend Incidents
+            </div>
+        </div>
+        <div class="metric-icon">📅</div>
+    </div>
+    
+    <div class="metric-card">
+        <div class="metric-info">
+            <h3>Peak Traffic Signal Rate</h3>
+            <div class="value">{{ signal_pct }}%</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                Near Traffic Signals
+            </div>
+        </div>
+        <div class="metric-icon">🚦</div>
+    </div>
+    
+    <div class="metric-card success">
+        <div class="metric-info">
+            <h3>Avg. Vehicles Involved</h3>
+            <div class="value">{{ avg_vehicles }}</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                Per Accident
+            </div>
+        </div>
+        <div class="metric-icon">🚗</div>
+    </div>
+</div>
+
+<!-- Charts Grid -->
+<div class="dashboard-grid">
+    <!-- Hourly Trends -->
+    <div class="card col-6">
+        <div class="card-header">
+            <div class="card-title">⏰ Hourly Accident Distribution (24-Hour Trend)</div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="hourlyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Trends -->
+    <div class="card col-6">
+        <div class="card-header">
+            <div class="card-title">📅 Weekly Accident Distribution (Day-of-Week Trend)</div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="weeklyChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Accident Causes -->
+    <div class="card col-6">
+        <div class="card-header">
+            <div class="card-title">💥 Primary Accident Triggers</div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="causesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Traffic Density radar -->
+    <div class="card col-6">
+        <div class="card-header">
+            <div class="card-title">🚗 Accident Traffic Density profile</div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="densityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rawAnalytics = {{ analytics_data | tojson }};
+        
+        // 1. Hourly Trend Chart (Line Chart)
+        const ctxHourly = document.getElementById('hourlyChart').getContext('2d');
+        new Chart(ctxHourly, {
+            type: 'line',
+            data: {
+                labels: rawAnalytics.hourly.labels.map(h => `${h}:00`),
+                datasets: [{
+                    label: 'Accidents',
+                    data: rawAnalytics.hourly.values,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#2563eb'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' }, maxTicksLimit: 12 }
+                    },
+                    y: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
+                    }
+                }
+            }
+        });
+
+        // 2. Weekly Trend Chart (Line Chart)
+        const ctxWeekly = document.getElementById('weeklyChart').getContext('2d');
+        new Chart(ctxWeekly, {
+            type: 'line',
+            data: {
+                labels: rawAnalytics.weekly.labels,
+                datasets: [{
+                    label: 'Accidents',
+                    data: rawAnalytics.weekly.values,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#10b981'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
+                    },
+                    y: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
+                    }
+                }
+            }
+        });
+
+        // 3. Accident Causes (Bar Chart)
+        const ctxCauses = document.getElementById('causesChart').getContext('2d');
+        new Chart(ctxCauses, {
+            type: 'bar',
+            data: {
+                labels: rawAnalytics.causes.labels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
+                datasets: [{
+                    label: 'Accidents',
+                    data: rawAnalytics.causes.values,
+                    backgroundColor: [
+                        'rgba(239, 68, 68, 0.85)',  // distraction
+                        'rgba(245, 158, 11, 0.85)',  // overspeeding
+                        'rgba(59, 130, 246, 0.85)',  // weather
+                        'rgba(139, 92, 246, 0.85)',  // drunk driving
+                        'rgba(16, 185, 129, 0.85)'   // poor road
+                    ],
+                    borderColor: [
+                        '#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6', '#10b981'
+                    ],
+                    borderWidth: 1.5,
+                    borderRadius: 6,
+                    barThickness: 32
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
+                    },
+                    y: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
+                    }
+                }
+            }
+        });
+
+        // 4. Traffic Density Radar Chart
+        const ctxDensity = document.getElementById('densityChart').getContext('2d');
+        new Chart(ctxDensity, {
+            type: 'radar',
+            data: {
+                labels: rawAnalytics.density.labels.map(l => l.toUpperCase() + ' DENSITY'),
+                datasets: [{
+                    label: 'Distribution Profile',
+                    data: rawAnalytics.density.values,
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    r: {
+                        angleLines: { color: '#e2e8f0' },
+                        grid: { color: '#e2e8f0' },
+                        ticks: { display: false },
+                        pointLabels: {
+                            font: { family: 'Plus Jakarta Sans', size: 10, weight: '700' },
+                            color: '#475569'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

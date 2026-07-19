@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Severity Prediction - Road Accident Hotspot{% endblock %}
+{% block page_title %}Accident Severity Predictor{% endblock %}
+
+{% block content %}
+<div class="split-layout" style="height: auto; min-height: calc(100vh - 150px);">
+    <!-- Inputs Card -->
+    <div class="split-sidebar" style="overflow-y: visible;">
+        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5;">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+            </svg>
+            Environmental Inputs
+        </h3>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.4;">
+            Fill in the road and environmental conditions below to predict the potential severity of an accident.
+        </p>
+
+        <form method="POST" action="/predict" style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="form-group">
+                <label for="weather">Weather Condition</label>
+                <select name="weather" id="weather" class="form-select" required>
+                    <option value="clear" {% if inputs and inputs.weather == 'clear' %}selected{% endif %}>Clear</option>
+                    <option value="rain" {% if inputs and inputs.weather == 'rain' %}selected{% endif %}>Rain</option>
+                    <option value="fog" {% if inputs and inputs.weather == 'fog' %}selected{% endif %}>Fog</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="visibility">Visibility Level</label>
+                <select name="visibility" id="visibility" class="form-select" required>
+                    <option value="high" {% if inputs and inputs.visibility == 'high' %}selected{% endif %}>High</option>
+                    <option value="medium" {% if inputs and inputs.visibility == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="low" {% if inputs and inputs.visibility == 'low' %}selected{% endif %}>Low</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="traffic_density">Traffic Density</label>
+                <select name="traffic_density" id="traffic_density" class="form-select" required>
+                    <option value="low" {% if inputs and inputs.traffic_density == 'low' %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if inputs and inputs.traffic_density == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if inputs and inputs.traffic_density == 'high' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="temperature">Ambient Temperature (°C)</label>
+                <input type="number" name="temperature" id="temperature" class="form-input" 
+                       placeholder="Enter temperature" value="{% if inputs %}{{ inputs.temperature }}{% else %}25{% endif %}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">
+                Compute Severity Risk
+            </button>
+        </form>
+    </div>
+
+    <!-- Prediction Outputs Card -->
+    <div class="split-main" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 450px;">
+        {% if prediction %}
+            <div class="predict-result-card">
+                <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); font-weight: 700; margin-bottom: 6px;">Evaluation Complete</h4>
+                
+                {% if prediction == "fatal" %}
+                    <span class="severity-badge fatal">🚨 Fatal Severity Risk</span>
+                {% elif prediction == "major" %}
+                    <span class="severity-badge major">⚠️ Major Severity Risk</span>
+                {% else %}
+                    <span class="severity-badge minor">✅ Minor Severity Risk</span>
+                {% endif %}
+                
+                <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 10px;">Calculated Accident Risk Index</h2>
+                
+                <!-- Circular Gauge -->
+                <div class="gauge-container">
+                    <svg class="gauge-circle" viewBox="0 0 100 100">
+                        <circle class="gauge-circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="gauge-circle-fill" cx="50" cy="50" r="42" 
+                                style="stroke: {% if prediction == 'fatal' %}var(--danger){% elif prediction == 'major' %}var(--warning){% else %}var(--success){% endif %};
+                                       stroke-dasharray: 263.89;
+                                       stroke-dashoffset: {{ 263.89 * (1 - risk_percent / 100) }};">
+                        </circle>
+                    </svg>
+                    <div class="gauge-text" style="color: {% if prediction == 'fatal' %}var(--danger){% elif prediction == 'major' %}var(--warning){% else %}var(--success){% endif %};">
+                        {{ risk_percent }}%
+                    </div>
+                </div>
+                
+                <p style="font-size: 13px; color: var(--text-secondary); max-width: 380px; margin-bottom: 24px; line-height: 1.5;">
+                    The environmental risk score is <strong>{{ score }} out of 7</strong>. Based on this risk score, an accident under these conditions is highly likely to result in 
+                    <strong>{{ prediction | upper }}</strong> severity.
+                </p>
+                
+                <!-- Risk Factors Breakdown -->
+                <div class="breakdown-list">
+                    <h3 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 12px; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+                        Point Breakdown
+                    </h3>
+                    <div class="breakdown-item">
+                        <span>Weather Condition ({{ inputs.weather | capitalize }})</span>
+                        <span>+{{ score_breakdown.weather }} pts</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Visibility Level ({{ inputs.visibility | capitalize }})</span>
+                        <span>+{{ score_breakdown.visibility }} pts</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Traffic Density ({{ inputs.traffic_density | capitalize }})</span>
+                        <span>+{{ score_breakdown.traffic_density }} pts</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Temperature ({{ inputs.temperature }}°C)</span>
+                        <span>+{{ score_breakdown.temperature }} pts</span>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Standby Display -->
+            <div style="text-align: center; padding: 40px; color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+                <div style="font-size: 64px; opacity: 0.7;">🔮</div>
+                <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">Awaiting Calculation Inputs</h2>
+                <p style="font-size: 14px; max-width: 320px; line-height: 1.5;">
+                    Select environmental conditions and run the prediction solver in the left panel to calculate risk scoring and severity categories.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

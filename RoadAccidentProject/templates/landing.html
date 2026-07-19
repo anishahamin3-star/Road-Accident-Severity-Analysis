@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Accident Hotspot Detection & Severity Analysis System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+</head>
+<body>
+
+<section class="landing">
+    <!-- Starfield backdrops -->
+    <div class="sky-stars"></div>
+    <div class="horizon-glow"></div>
+
+    <!-- Header Logo & Tag -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+            <div class="logo-text">
+                <h2>ROAD <span class="accent-text">SAFETY</span></h2>
+                <p>DATA DRIVEN | SAFER TOMORROW</p>
+            </div>
+        </div>
+        <div class="save-tag">🛡️ Every Insight <span class="accent-text">Saves Lives</span></div>
+    </header>
+
+    <!-- 3D Road Scene & Car -->
+    <div class="road-scene">
+        <div class="highway">
+            <div class="side-line left-line"></div>
+            <div class="lane-markings"></div>
+            <div class="side-line right-line"></div>
+        </div>
+
+        <div class="car-wrapper" id="carWrapper">
+            <img src="{{ url_for('static', filename='images/car.png') }}" class="car-img" id="car" alt="Sports Car">
+            <div class="underglow"></div>
+            <div class="headlight-glow"></div>
+        </div>
+    </div>
+
+    <!-- Glassmorphism Main Content Panel -->
+    <div class="glass-panel" id="landingPanel">
+        <div class="panel-icon">📊</div>
+        <div class="panel-subtitle">Data Driven Insights | Safer Roads | Better Tomorrow</div>
+        <h1 class="panel-title">Road Accident Hotspot Detection & Severity Analysis System</h1>
+        <p class="panel-desc">
+            Analyze accident patterns, identify high-risk locations, and visualize road safety insights through interactive analytics and hotspot maps.
+        </p>
+        <div class="panel-buttons">
+            <a href="/dashboard" class="main-btn">Explore Dashboard <span class="btn-arrow">→</span></a>
+            <a href="/map" class="map-btn">View Hotspot Map <span class="btn-arrow">→</span></a>
+        </div>
+    </div>
+
+    <!-- Bottom Features Section -->
+    <footer class="features" id="landingFeatures">
+        <div class="feature-item">
+            <span class="feature-icon">🛡️</span>
+            <div>
+                <b>DATA DRIVEN INSIGHTS</b>
+                <span>Make informed decisions</span>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">📍</span>
+            <div>
+                <b>IDENTIFY HOTSPOTS</b>
+                <span>Detect high-risk zones</span>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">📊</span>
+            <div>
+                <b>VISUALIZE TRENDS</b>
+                <span>Interactive charts and maps</span>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">💙</span>
+            <div>
+                <b>SAVE LIVES</b>
+                <span>Build safer roads</span>
+            </div>
+        </div>
+    </footer>
+</section>
+
+<script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,620 @@
+/* -------------------------------------------------------------
+   ROAD SAFETY LANDING PAGE CSS
+   Theme: Dark Cinematic Blue & Glassmorphism
+   Optimization: GPU Hardware-Accelerated (Translate3D / Transforms)
+   ------------------------------------------------------------- */
+
+/* Reset & Base Stylings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    background: #020617;
+    color: #f8fafc;
+    min-height: 100vh;
+}
+
+.landing {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 40%, #08122c 0%, #020617 85%);
+}
+
+/* 1. Cinematic Starfield & Horizon Glow */
+.sky-stars {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.75) 1px, transparent 1px),
+        radial-gradient(circle at 75% 15%, rgba(255, 255, 255, 0.9) 1.5px, transparent 1.5px),
+        radial-gradient(circle at 45% 55%, rgba(255, 255, 255, 0.6) 1px, transparent 1px),
+        radial-gradient(circle at 10% 75%, rgba(255, 255, 255, 0.5) 1.2px, transparent 1.2px),
+        radial-gradient(circle at 85% 65%, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+        radial-gradient(circle at 62% 38%, rgba(255, 255, 255, 0.5) 2px, transparent 2px),
+        radial-gradient(circle at 30% 12%, rgba(255, 255, 255, 0.7) 1px, transparent 1px),
+        radial-gradient(circle at 92% 82%, rgba(255, 255, 255, 0.6) 1.2px, transparent 1.2px);
+    background-size: 600px 600px;
+    opacity: 0.35;
+    animation: starsTwinkle 12s infinite ease-in-out;
+    z-index: 1;
+}
+
+@keyframes starsTwinkle {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.02); }
+}
+
+.horizon-glow {
+    position: absolute;
+    bottom: 35%;
+    left: 0;
+    width: 100%;
+    height: 45%;
+    background: radial-gradient(ellipse at 50% 100%, rgba(37, 99, 235, 0.16) 0%, rgba(15, 23, 42, 0) 70%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* 2. Header, Logo & Save Tag */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 20;
+    animation: fadeInDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    font-size: 36px;
+    filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.5));
+    animation: shieldPulse 3s infinite ease-in-out;
+}
+
+@keyframes shieldPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.5)); }
+    50% { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8)); }
+}
+
+.logo-text h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #f8fafc;
+}
+
+.accent-text {
+    color: #3b82f6;
+    background: linear-gradient(90deg, #3b82f6, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo-text p {
+    font-size: 11px;
+    color: #94a3b8;
+    letter-spacing: 2.5px;
+    margin-top: 2px;
+}
+
+.save-tag {
+    padding: 10px 24px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 30px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 3. 3D Road Scene */
+.road-scene {
+    position: absolute;
+    inset: 0;
+    perspective: 800px;
+    perspective-origin: 50% 38%;
+    overflow: hidden;
+    z-index: 3;
+}
+
+.highway {
+    position: absolute;
+    bottom: -15%;
+    left: 50%;
+    width: 2200px;
+    height: 75%;
+    background: linear-gradient(to top, #060913 0%, #02040a 100%);
+    transform: translateX(-50%) rotateX(68deg);
+    transform-origin: bottom center;
+    box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.95);
+    border-left: 5px solid rgba(255, 255, 255, 0.08);
+    border-right: 5px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.lane-markings {
+    position: absolute;
+    top: -200%;
+    bottom: 0;
+    left: 50%;
+    width: 8px;
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.7) 0px,
+        rgba(255, 255, 255, 0.7) 50px,
+        transparent 50px,
+        transparent 110px
+    );
+    animation: roadDriveEffect 0.45s linear infinite;
+}
+
+@keyframes roadDriveEffect {
+    from { transform: translateX(-50%) translate3d(0, 0, 0); }
+    to { transform: translateX(-50%) translate3d(0, 110px, 0); }
+}
+
+.side-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: rgba(37, 99, 235, 0.45);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.7);
+}
+
+.left-line {
+    left: 20%;
+}
+
+.right-line {
+    right: 20%;
+}
+
+/* 4. Cinematic Car Entrance & Glows */
+.car-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    width: 260px;
+    transform: translate(-50%, -50%) scale(0.01);
+    opacity: 0;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: carDriveCinematic 2.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes carDriveCinematic {
+    0% {
+        left: 50%;
+        top: 38%;
+        transform: translate(-50%, -50%) scale(0.02);
+        opacity: 0;
+        filter: brightness(0.2) blur(3px);
+    }
+    15% {
+        opacity: 1;
+        filter: brightness(0.7) blur(1px);
+    }
+    45% {
+        filter: brightness(1) blur(0);
+    }
+    100% {
+        left: 27%; /* Positioned on the left lane */
+        top: 61%;
+        transform: translate(-50%, -50%) scale(0.72);
+        opacity: 1;
+    }
+}
+
+.car-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.85));
+}
+
+/* Headlight Projector beams & Reflections */
+.underglow {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140%;
+    height: 35px;
+    background: radial-gradient(ellipse, rgba(56, 189, 248, 0.45) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 9;
+    opacity: 0;
+    animation: headlightActivate 1.2s ease-out 1.6s forwards;
+}
+
+.headlight-glow {
+    position: absolute;
+    bottom: -290px;
+    width: 460px;
+    height: 320px;
+    background: radial-gradient(ellipse at top, rgba(56, 189, 248, 0.28) 0%, rgba(37, 99, 235, 0.08) 45%, transparent 75%);
+    pointer-events: none;
+    z-index: 8;
+    mix-blend-mode: screen;
+    opacity: 0;
+    animation: headlightActivate 1.2s ease-out 1.6s forwards;
+}
+
+@keyframes headlightActivate {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* 5. Glassmorphism Panel */
+.glass-panel {
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%) scale(0.92);
+    width: 520px;
+    background: rgba(6, 11, 26, 0.48);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 24px;
+    padding: 45px;
+    box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.8),
+        0 0 45px rgba(37, 99, 235, 0.15),
+        inset 0 0 20px rgba(59, 130, 246, 0.08);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    opacity: 0;
+    visibility: hidden;
+    transition: 
+        opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), 
+        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 15;
+}
+
+.glass-panel.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+}
+
+.panel-icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+    text-align: left;
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.8));
+    animation: iconFloat 4s infinite ease-in-out;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.panel-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #38bdf8;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.panel-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.25;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff 60%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.panel-desc {
+    color: #94a3b8;
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 35px;
+}
+
+/* Button Interactions */
+.panel-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.main-btn, .map-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 15px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+
+.main-btn {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.main-btn:hover {
+    background: linear-gradient(90deg, #1d4ed8, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(37, 99, 235, 0.6);
+}
+
+.main-btn:hover .btn-arrow {
+    transform: translateX(4px);
+}
+
+.map-btn {
+    background: rgba(15, 23, 42, 0.45);
+    color: #cbd5e1;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.map-btn:hover {
+    background: rgba(15, 23, 42, 0.7);
+    color: #ffffff;
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
+}
+
+.map-btn:hover .btn-arrow {
+    transform: translateX(4px);
+}
+
+.btn-arrow {
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+/* 6. Bottom Features Section */
+.features {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    bottom: 35px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: rgba(6, 11, 26, 0.4);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: 18px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 15;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.features.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 24px;
+    border-right: 1px solid rgba(59, 130, 246, 0.12);
+}
+
+.feature-item:last-child {
+    border-right: none;
+}
+
+.feature-icon {
+    font-size: 24px;
+}
+
+.feature-item b {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #f8fafc;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.feature-item span {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+/* Entry Animation Helpers */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 7. Responsive Media Queries */
+@media (max-width: 1100px) {
+    .features {
+        grid-template-columns: repeat(2, 1fr);
+        bottom: 25px;
+    }
+    .feature-item {
+        border-bottom: 1px solid rgba(59, 130, 246, 0.12);
+        padding: 20px;
+    }
+    .feature-item:nth-child(even) {
+        border-right: none;
+    }
+    .feature-item:nth-child(3), .feature-item:nth-child(4) {
+        border-bottom: none;
+    }
+    .glass-panel {
+        width: 460px;
+        right: 5%;
+        padding: 35px;
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        overflow-y: auto;
+    }
+
+    .landing {
+        height: auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-bottom: 120px;
+    }
+
+    .header {
+        position: relative;
+        padding: 25px 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .save-tag {
+        display: inline-block;
+    }
+
+    /* Adjust 3D road scene to be static/underlay background */
+    .road-scene {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+    }
+
+    .highway {
+        width: 1400px;
+        height: 80%;
+    }
+
+    /* Change Car Animation to stay centered and higher up */
+    .car-wrapper {
+        animation: carDriveCinematicMobile 2.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes carDriveCinematicMobile {
+        0% {
+            left: 50%;
+            top: 38%;
+            transform: translate(-50%, -50%) scale(0.02);
+            opacity: 0;
+            filter: brightness(0.2) blur(3px);
+        }
+        15% {
+            opacity: 1;
+            filter: brightness(0.7) blur(1px);
+        }
+        100% {
+            left: 50%;
+            top: 70%;
+            transform: translate(-50%, -50%) scale(0.55);
+            opacity: 1;
+        }
+    }
+
+    .headlight-glow {
+        bottom: -240px;
+        width: 320px;
+        height: 250px;
+    }
+
+    /* Position glass panel centrally over the background */
+    .glass-panel {
+        position: relative;
+        top: 0;
+        right: 0;
+        transform: scale(0.95);
+        width: 90%;
+        max-width: 500px;
+        margin: 40px auto 30px auto;
+        padding: 30px 25px;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 10;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s ease;
+    }
+
+    .glass-panel.show {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+    }
+
+    .panel-title {
+        font-size: 26px;
+    }
+
+    .features {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 90%;
+        margin: 0 auto;
+        grid-template-columns: 1fr;
+        z-index: 10;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .feature-item {
+        border-right: none;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.12);
+    }
+
+    .feature-item:last-child {
+        border-bottom: none;
+    }
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Road Type Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav style="background-color: darkblue; padding: 15px;">
+    <a href="/" style="color:white; margin:15px; text-decoration:none;">Dashboard</a>
+    <a href="/predict" style="color:white; margin:15px; text-decoration:none;">Severity Prediction</a>
+    <a href="/map" style="color:white; margin:15px; text-decoration:none;">Accident Map</a>
+    <a href="/weather" style="color:white; margin:15px; text-decoration:none;">Weather Analysis</a>
+    <a href="/road" style="color:white; margin:15px; text-decoration:none;">Road Type Analysis</a>
+</nav>
+
+<h1>Road Type Accident Analysis</h1>
+
+<img src="{{ url_for('static', filename='graphs/road_type_analysis.png') }}" width="700">
+
+<br><br>
+
+<a href="/">⬅ Back to Dashboard</a>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}{{ city }} Accident Analysis - Road Accident Hotspot{% endblock %}
+{% block page_title %}{{ city }} City Report{% endblock %}
+
+{% block content %}
+<!-- City Switcher bar -->
+<div class="card" style="margin-bottom: 24px; padding: 16px 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="/" class="btn btn-secondary" style="padding: 8px 14px; font-size: 13px;">
+                ⬅ Back to Overview
+            </a>
+            <h2 style="font-size: 18px; font-weight: 800; color: var(--text-primary);">
+                📍 Detailed Report for {{ city }}
+            </h2>
+        </div>
+        
+        <form method="POST" action="/city" style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">Switch City:</span>
+            <select name="city" class="form-select" style="min-width: 200px; padding: 6px 12px;" onchange="this.form.submit()">
+                {% for c in cities_list %}
+                    <option value="{{ c }}" {% if c == city %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+</div>
+
+<!-- City KPI Stats -->
+<div class="stats-grid" style="margin-bottom: 24px;">
+    <div class="metric-card danger">
+        <div class="metric-info">
+            <h3>Total City Accidents</h3>
+            <div class="value">{{ total }}</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                Registered Hotspot Points
+            </div>
+        </div>
+        <div class="metric-icon">🚦</div>
+    </div>
+    
+    <div class="metric-card warning">
+        <div class="metric-info">
+            <h3>Avg. Casualties</h3>
+            <div class="value">{{ avg_casualties }}</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                Per Accident in {{ city }}
+            </div>
+        </div>
+        <div class="metric-icon">🩹</div>
+    </div>
+    
+    <div class="metric-card success">
+        <div class="metric-info">
+            <h3>Primary Trigger</h3>
+            <div class="value" style="font-size: 20px; font-weight: 800; margin-top: 5px; text-transform: capitalize;">
+                {{ top_cause }}
+            </div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                {{ top_cause_count }} incidents ({{ top_cause_pct }}%)
+            </div>
+        </div>
+        <div class="metric-icon">⚠️</div>
+    </div>
+    
+    <div class="metric-card">
+        <div class="metric-info">
+            <h3>Peak Hour Accidents</h3>
+            <div class="value">{{ peak_pct }}%</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                {{ peak_count }} during commute times
+            </div>
+        </div>
+        <div class="metric-icon">⏰</div>
+    </div>
+</div>
+
+<!-- City Visualizations -->
+<div class="dashboard-grid">
+    <!-- Local Severity -->
+    <div class="card col-5">
+        <div class="card-header">
+            <div class="card-title">⚠️ Local Severity Breakdown</div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="citySeverityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Local Causes -->
+    <div class="card col-7">
+        <div class="card-header">
+            <div class="card-title">💥 Local Accident Causes</div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="cityCausesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+    <div class="card-header">
+        <div class="card-title">🗺️ Nearby Map Focus</div>
+    </div>
+    <div class="card-body" style="height: 380px; padding: 0;">
+        <!-- Directly embed a map focused on this city -->
+        <iframe src="/map?city={{ city | urlencode }}" style="width: 100%; height: 380px; border: none; border-radius: 8px;"></iframe>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rawCityData = {{ city_chart_data | tojson }};
+        
+        // 1. Local Severity (Doughnut)
+        const ctxSeverity = document.getElementById('citySeverityChart').getContext('2d');
+        new Chart(ctxSeverity, {
+            type: 'doughnut',
+            data: {
+                labels: rawCityData.severity.labels.map(l => l.toUpperCase()),
+                datasets: [{
+                    data: rawCityData.severity.values,
+                    backgroundColor: [
+                        '#10b981', // minor -> emerald
+                        '#f59e0b', // major -> amber
+                        '#ef4444'  // fatal -> crimson
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' },
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    }
+                },
+                cutout: '68%'
+            }
+        });
+
+        // 2. Local Causes (Bar Chart)
+        const ctxCauses = document.getElementById('cityCausesChart').getContext('2d');
+        new Chart(ctxCauses, {
+            type: 'bar',
+            data: {
+                labels: rawCityData.causes.labels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
+                datasets: [{
+                    label: 'Accidents',
+                    data: rawCityData.causes.values,
+                    backgroundColor: 'rgba(37, 99, 235, 0.85)',
+                    borderColor: '#2563eb',
+                    borderWidth: 1.5,
+                    borderRadius: 6,
+                    barThickness: 32
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
+                    },
+                    y: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

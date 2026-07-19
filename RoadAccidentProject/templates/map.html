@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Accident Map - Road Accident Hotspot{% endblock %}
+{% block page_title %}Accident Hotspot Map{% endblock %}
+
+{% block content %}
+<div class="split-layout">
+    <!-- Filters Sidebar -->
+    <div class="split-sidebar">
+        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5;">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            Filter Hotspots
+        </h3>
+        
+        <div class="form-group">
+            <label for="filter-city">City</label>
+            <select id="filter-city" class="form-select">
+                <option value="">-- All Cities --</option>
+                {% for city in cities_list %}
+                    <option value="{{ city }}">{{ city }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="filter-severity">Severity</label>
+            <select id="filter-severity" class="form-select">
+                <option value="">-- All Severities --</option>
+                <option value="minor">Minor</option>
+                <option value="major">Major</option>
+                <option value="fatal">Fatal</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="filter-weather">Weather</label>
+            <select id="filter-weather" class="form-select">
+                <option value="">-- All Weathers --</option>
+                <option value="clear">Clear</option>
+                <option value="rain">Rain</option>
+                <option value="fog">Fog</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="filter-road">Road Type</label>
+            <select id="filter-road" class="form-select">
+                <option value="">-- All Road Types --</option>
+                <option value="urban">Urban</option>
+                <option value="rural">Rural</option>
+                <option value="highway">Highway</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <button id="apply-filters" class="btn btn-primary" style="width: 100%;">
+                Apply Filters
+            </button>
+            <button id="reset-filters" class="btn btn-secondary" style="width: 100%;">
+                Reset Map
+            </button>
+        </div>
+        
+        <div style="border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: auto;">
+            <h4 style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Map Legend</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600;">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--danger); display: inline-block;"></span>
+                    Fatal Accidents (🚨)
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600;">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--warning); display: inline-block;"></span>
+                    Major Accidents (⚠️)
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600;">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--success); display: inline-block;"></span>
+                    Minor Accidents (✅)
+                </div>
+            </div>
+            
+            <p style="font-size: 11px; color: var(--text-light); line-height: 1.4; margin-top: 20px;">
+                💡 <strong>Tip:</strong> Toggle layers on the top-right of the map to switch between <em>Hotspot Density Heatmap</em> and <em>Accident Clusters</em>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Map Viewport -->
+    <div class="split-main">
+        <iframe id="map-frame" src="/map-iframe" class="map-iframe"></iframe>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const citySelect = document.getElementById("filter-city");
+        const severitySelect = document.getElementById("filter-severity");
+        const weatherSelect = document.getElementById("filter-weather");
+        const roadSelect = document.getElementById("filter-road");
+        const applyBtn = document.getElementById("apply-filters");
+        const resetBtn = document.getElementById("reset-filters");
+        const mapFrame = document.getElementById("map-frame");
+
+        // Function to build query URL and reload iframe
+        function updateMap() {
+            const params = new URLSearchParams();
+            if (citySelect.value) params.append("city", citySelect.value);
+            if (severitySelect.value) params.append("severity", severitySelect.value);
+            if (weatherSelect.value) params.append("weather", weatherSelect.value);
+            if (roadSelect.value) params.append("road_type", roadSelect.value);
+
+            const queryString = params.toString();
+            mapFrame.src = "/map-iframe" + (queryString ? "?" + queryString : "");
+        }
+
+        // Apply filters click handler
+        applyBtn.addEventListener("click", updateMap);
+
+        // Reset filters click handler
+        resetBtn.addEventListener("click", function() {
+            citySelect.value = "";
+            severitySelect.value = "";
+            weatherSelect.value = "";
+            roadSelect.value = "";
+            updateMap();
+        });
+
+        // Set filters if present in URL query
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("city")) {
+            citySelect.value = urlParams.get("city");
+            updateMap();
+        }
+    });
+</script>
+{% endblock %}
